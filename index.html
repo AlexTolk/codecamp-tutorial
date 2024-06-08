@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Codecamp tutorial</title>
+  <style>
+    .box1 {
+      background-color:chocolate;
+      height: 30vh;
+      width: 30vh;
+    }
+    .box2 {
+      background-color:blueviolet;
+      height: 30vh;
+      width: 30vh;
+    }
+    .box3 {
+      background-color:crimson;
+      height: 30vh;
+      width: 30vh;
+    }
+    .box4 {
+      background-color:darkcyan;
+      height: 30vh;
+      width: 30vh;
+    }
+    [v-cloak] {
+      display: none;
+    }
+    input {
+      margin: 10px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" v-cloak>
+    <h1>{{ greeting }}</h1>
+    <input @keyup.enter="greet" v-model="greeting" />
+
+    <hr>
+
+    <div v-show="isVisible" class="box1">I'm always in the DOM! But sometimes I'm not visible</div>
+    <div v-if="isThere" class="box2">I'm only in the DOM when the first condition is true!</div>
+    <div v-else-if="isThere2" class="box3">I'm only in the DOM when the second condition is true!</div>
+    <div v-else="isThere" class="box4">I'm only in the DOM when neither condition is true!</div>
+
+    <button @click="isVisible = !isVisible">Show Box</button>
+    <button @click="toggleBox">Toggle Box</button>
+
+    <hr>
+    <login-form />
+
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    let app = Vue.createApp({
+      data: function() {
+        return {
+          greeting: 'Hello Vue!',
+          isThere: true,
+          isThere2: false,
+          isVisible: true,
+
+        }
+      },
+      methods: {
+        toggleBox() {
+          this.isThere = !this.isThere
+        },
+        greet() {
+          console.log(this.greeting)
+        }
+      }
+    })
+    app.component('login-form', {
+      template: `
+        <form @submit.prevent="handleSubmit">
+          <h1>{{ title }}</h1>
+          <custom-input type="email" v-model="email" :label="emailLabel"/>
+          <custom-input type="password" v-model="password" :label="passwordLabel"/>
+          <button>Log in</button>
+        </form>
+      `,
+      components: ['custom-input'],
+      data() {
+        return{
+          title: 'Login form',
+          email: '',
+          password: '',
+          emailLabel: 'Email',
+          passwordLabel: 'Password'
+        }
+      },
+      methods: {
+        handleSubmit() {
+          console.log(this.email, this.password)
+        }
+      }
+    })
+    app.component('custom-input', {
+      template: `
+        <label>
+          {{ label }}
+          <input type="text" v-model="inputValue">
+        </label>
+      `,
+      props: ['label', 'modelValue'],
+      computed: {
+        inputValue: {
+          get() {
+            return this.modelValue
+          },
+          set(value) {
+            this.$emit('update:modelValue', value)
+          }
+        }
+      },
+      // data() {
+      //   return {
+      //     inputValue: ''
+      //   }
+      // }
+    })
+    app.mount('#app')
+  </script>
+</body>
+</html>
