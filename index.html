@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Codecamp tutorial</title>
   <style>
+    .box {
+      background-color:rgb(50, 38, 28);
+      height: 30vh;
+      width: 30vh;
+    }
     .box1 {
       background-color:chocolate;
       height: 30vh;
@@ -50,7 +55,12 @@
     <button @click="toggleBox">Toggle Box</button>
 
     <hr>
+    <div class="box" v-show="isVisible"></div>
+
+
+    <hr>
     <login-form />
+
 
   </div>
 
@@ -73,14 +83,22 @@
         greet() {
           console.log(this.greeting)
         }
+      },
+      updated() {
+        console.log('updated')
       }
     })
     app.component('login-form', {
       template: `
         <form @submit.prevent="handleSubmit">
           <h1>{{ title }}</h1>
-          <custom-input type="email" v-model="email" :label="emailLabel"/>
-          <custom-input type="password" v-model="password" :label="passwordLabel"/>
+          <custom-input
+            v-for="(input, i) in inputs"
+            :key="i"
+            v-model="input.value"
+            :label="input.label"
+            :type="input.type"
+          />
           <button>Log in</button>
         </form>
       `,
@@ -88,15 +106,22 @@
       data() {
         return{
           title: 'Login form',
-          email: '',
-          password: '',
-          emailLabel: 'Email',
-          passwordLabel: 'Password'
+          inputs: [{
+            label: 'Email',
+            value: '',
+            type: 'email'
+          },
+          {
+            label: 'Password',
+            value: '',
+            type: 'password'
+          }
+        ]
         }
       },
       methods: {
         handleSubmit() {
-          console.log(this.email, this.password)
+          console.log(this.inputs[0].value, this.inputs[1].value)
         }
       }
     })
@@ -104,10 +129,10 @@
       template: `
         <label>
           {{ label }}
-          <input type="text" v-model="inputValue">
+          <input type="type" v-model="inputValue">
         </label>
       `,
-      props: ['label', 'modelValue'],
+      props: ['label', 'type', 'modelValue'],
       computed: {
         inputValue: {
           get() {
@@ -123,6 +148,20 @@
       //     inputValue: ''
       //   }
       // }
+    })
+    app.component('test-box', {
+      template:`
+        <div class="box"></div>
+      `,
+      created() {
+        console.log("created")
+      },
+      mounted() {
+        console.log("mounted")
+      },
+      umounted(){
+        console.log("unmounted")
+      }
     })
     app.mount('#app')
   </script>
